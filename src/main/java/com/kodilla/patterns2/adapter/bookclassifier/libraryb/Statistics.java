@@ -7,27 +7,23 @@ public class Statistics implements BookStatistics {
     @Override
     public int averagePublicationYear(Map<BookSignature, Book> books) {
         if (books.size() == 0) return 0;
-        int sum = 0;
-        for(Map.Entry<BookSignature, Book> entry : books.entrySet()) {
-            sum += entry.getValue().getYearOfPublication();
-        }
-        return sum / books.size();
+        int result = books.entrySet().stream()
+                .map(entry -> entry.getValue().getYearOfPublication())
+                .reduce(0, (sum, current) -> sum = sum + current);
+        return result / books.size();
     }
 
     @Override
     public int medianaPublicationYear(Map<BookSignature, Book> books) {
         if (books.size() == 0) return 0;
-        int[] years = new int[books.size()];
-        int n = 0;
-        for(Map.Entry<BookSignature, Book> entry : books.entrySet()) {
-            years[n] = entry.getValue().getYearOfPublication();
-            n++;
-        }
-        Arrays.sort(years);
-        if (years.length % 2 == 0) {
-            return years[(int)(years.length / 2 + 0.5)];
+        int[] result = books.entrySet().stream()
+                .mapToInt(entry -> entry.getValue().getYearOfPublication())
+                .toArray();
+        Arrays.sort(result);
+        if (result.length % 2 == 0) {
+            return result[(int)(result.length / 2 + 0.5)];
         } else {
-            return years[years.length / 2];
+            return result[result.length / 2];
         }
     }
 }
